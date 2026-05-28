@@ -289,6 +289,22 @@
         .badge-color-8 { background-color: #57534e; }
         .badge-color-9 { background-color: #db2777; }
     </style>
+<link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#0d47a1">
+    <meta name="apple-mobile-web-app-title" content="CFS Lão Khoa">
+    <link rel="apple-touch-icon" href="download.png">
+
+    <script>
+        // Kích hoạt Service Worker để chạy offline
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => console.log('PWA Service Worker đã kích hoạt thành công!', reg))
+                    .catch(err => console.log('Lỗi đăng ký PWA:', err));
+            });
+        }
+    </script>
 </head>
 <body>
 
