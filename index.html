@@ -27,7 +27,7 @@
             background-color: #f0f4f8;
         }
 
-        /* KHẮC PHỤC LỖI BACKDROP: Tạo lớp nền cách điệu từ ảnh chụp bệnh viện */
+        /* Lớp nền cách điệu sử dụng ảnh chụp bệnh viện */
         .backdrop-background {
             position: fixed;
             top: 0;
@@ -48,7 +48,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(to bottom, rgba(240, 244, 248, 0.85), rgba(200, 214, 229, 0.9));
+            background: linear-gradient(to bottom, rgba(240, 244, 248, 0.88), rgba(200, 214, 229, 0.92));
             z-index: -1;
         }
 
@@ -63,36 +63,29 @@
             z-index: 1;
         }
 
-        /* KHẮC PHỤC LỖI LOGO TRỐNG */
+        /* Thiết kế chữ nhận diện thương hiệu thay cho khung logo trống */
         .brand-header {
             text-align: center;
             margin-bottom: 25px;
         }
 
-        .hospital-logo-container {
-            width: 140px;
-            height: 140px;
-            margin: 0 auto 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #ffffff;
-            border-radius: 12px;
-            padding: 5px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-
-        .hospital-logo {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
+        .hospital-name {
+            color: #1e3a8a;
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 6px;
+            display: inline-block;
+            border-bottom: 2px solid #3b82f6;
+            padding-bottom: 4px;
         }
 
         h1 {
             color: var(--primary-color);
             font-size: 21px;
             font-weight: 800;
-            margin: 5px 0;
+            margin: 8px 0 4px 0;
             letter-spacing: 0.3px;
         }
 
@@ -120,7 +113,7 @@
             transition: width 0.3s ease;
         }
 
-        /* Giao diện khung câu hỏi mộc lâm sàng trực quan */
+        /* Khung câu hỏi lâm sàng */
         .step-container {
             background: #ffffff;
             border: 1px solid #e2e8f0;
@@ -211,7 +204,7 @@
 
         .btn-nav:hover { background-color: #475569; }
 
-        /* Khung kết quả phân màu chuyên sâu lâm sàng */
+        /* Màn hình kết quả phân dạng màu sắc */
         #result-section {
             display: none;
             margin-top: 25px;
@@ -281,7 +274,7 @@
 
         .btn-reset:hover { transform: translateY(-1px); }
 
-        /* Bảng màu kết quả CFS chuẩn theo tài liệu gốc */
+        /* Bảng màu kết quả hệ thống CFS */
         .res-cfs-1, .res-cfs-2, .res-cfs-3 { background-color: #f0fdf4; border-color: #16a34a; color: #14532d; }
         .res-cfs-4 { background-color: #f0f9ff; border-color: #0284c7; color: #0c4a6e; }
         .res-cfs-5, .res-cfs-6 { background-color: #fff7ed; border-color: #ea580c; color: #7c2d12; }
@@ -304,10 +297,7 @@
 
 <div class="container">
     <div class="brand-header">
-        <div class="hospital-logo-container">
-            <!-- Khắc phục lỗi hiển thị tệp logo download.png -->
-            <img src="download.png" alt="Logo Bệnh viện Lão khoa trung ương" class="hospital-logo" onerror="this.style.display='none'; this.parentNode.innerText='LOGOHOSPITAL'">
-        </div>
+        <div class="hospital-name">Bệnh viện Lão khoa Trung ương</div>
         <h1>CÔNG CỤ ĐÁNH GIÁ CLINICAL FRAILTY SCALE - CFS</h1>
         <div class="subtitle">Hệ thống hỗ trợ cá nhân hóa điều trị & tiên lượng lâm sàng</div>
     </div>
@@ -316,7 +306,7 @@
         <div class="progress-bar" id="progress"></div>
     </div>
 
-    <!-- KHUNG ĐIỀU HƯỚNG CÂY QUYẾT ĐỊNH CHUẨN ĐÚNG THEO FILE GỐC V4 -->
+    <!-- KHUNG ĐIỀU HƯỚNG CÂY QUYẾT ĐỊNH CHUẨN ĐÚNG THEO FILE GỐC V5 -->
     <div id="quiz-flow">
         
         <!-- BƯỚC 1: Terminally Ill -->
@@ -341,7 +331,7 @@
             </div>
         </div>
 
-        <!-- BƯỚC 2B: Nhánh Không Terminally Ill -> Kiểm tra BADL -->
+        <!-- BƯỚC 2B: Nhánh Không Terminally Ill -> Sửa logic nhảy trực tiếp CFS 7 nếu chọn 3-5 BADL -->
         <div class="step-container" id="step-badl-normal">
             <div class="question">2. Số lượng các hoạt động sinh hoạt cá nhân cơ bản (BADL) cần người khác hỗ trợ:</div>
             <div class="clinical-definition-box">
@@ -349,22 +339,13 @@
                 Mặc quần áo (dress), tắm rửa (bathe), ăn uống (eat), đi lại (walk), ra vào giường (get in and out of bed).
             </div>
             <div class="options-grid">
-                <button class="option-btn" onclick="goToStep('normal-badl-3-5')">Từ 3 - 5 BADL</button>
-                <button class="option-btn" onclick="goToStep('normal-badl-1-2')">Từ 1 - 2 BADL</button>
+                <button class="option-btn" onclick="goToStep('normal-badl-3-5')">Từ 3 - 5 BADL (Chỉ định CFS 7 trực tiếp)</button>
+                <button class="option-btn" onclick="goToStep('normal-badl-1-2')">Từ 1 - 2 BADL (Chỉ định CFS 6 trực tiếp)</button>
                 <button class="option-btn" onclick="goToStep('normal-badl-none')">Không phụ thuộc hoạt động nào (None)</button>
             </div>
         </div>
 
-        <!-- BƯỚC 3A: Nhánh 3-5 BADL của người không bị bệnh giai đoạn cuối -->
-        <div class="step-container" id="step-sub-badl-3-5">
-            <div class="question">3. Đánh giá lại mức độ phụ thuộc cụ thể của bệnh nhân:</div>
-            <div class="options-grid">
-                <button class="option-btn" onclick="setCFS(7)">Từ 3 - 5 BADL (Living with Severe Frailty)</button>
-                <button class="option-btn" onclick="setCFS(6)">Từ 1 - 2 BADL (Phân cấp điều phối nhánh)</button>
-            </div>
-        </div>
-
-        <!-- BƯỚC 3B: Sửa lỗi chính xác theo file gốc -> Nhánh Không BADL -> Kiểm tra số lượng IADL hỗ trợ -->
+        <!-- BƯỚC 3: Nhánh Không BADL -> Kiểm tra số lượng IADL hỗ trợ -->
         <div class="step-container" id="step-iadl-check">
             <div class="question">3. Số lượng các hoạt động sinh hoạt công cụ (IADL) cần người khác hỗ trợ:</div>
             <div class="clinical-definition-box">
@@ -377,7 +358,7 @@
             </div>
         </div>
 
-        <!-- BƯỚC 4A: Đếm số lượng đầu mục IADL chuẩn (Sửa lỗi ghi nhầm thành BADL ở ảnh cũ) -->
+        <!-- BƯỚC 4A: Đếm số lượng đầu mục IADL chuẩn -->
         <div class="step-container" id="step-iadl-count">
             <div class="question">4. Xác định chính xác số lượng đầu mục IADL cần người khác hỗ trợ:</div>
             <div class="options-grid">
@@ -386,7 +367,7 @@
             </div>
         </div>
 
-        <!-- BƯỚC 4B: Số lượng bệnh mạn tính (Number of Chronic Conditions) -->
+        <!-- BƯỚC 4B: Số lượng bệnh mạn tính -->
         <div class="step-container" id="step-chronic-conditions">
             <div class="question">4. Số lượng bệnh lý mạn tính (Number of Chronic Conditions) của bệnh nhân:</div>
             <div class="options-grid">
@@ -395,7 +376,7 @@
             </div>
         </div>
 
-        <!-- BƯỚC 5: Đánh giá sức khỏe chủ quan (Self-Rated Health) -->
+        <!-- BƯỚC 5: Đánh giá sức khỏe chủ quan -->
         <div class="step-container" id="step-self-health">
             <div class="question">5. Chỉ số đánh giá sức khỏe chủ quan (Self-Rated Health):</div>
             <div class="options-grid">
@@ -414,7 +395,7 @@
             </div>
         </div>
 
-        <!-- BƯỚC 6B: Nhánh Sức khỏe Rất tốt/Tốt -> Everything is an effort (Đúng chuẩn 3 nhánh file gốc) -->
+        <!-- BƯỚC 6B: Nhánh Sức khỏe Rất tốt/Tốt -> Everything is an effort -->
         <div class="step-container" id="step-effort-good">
             <div class="question">6. Cảm giác mọi hoạt động hàng ngày đều phải nỗ lực rất lớn (Everything is an effort):</div>
             <div class="options-grid">
@@ -479,7 +460,7 @@
         },
         2: {
             title: "Mức 2: Khỏe mạnh (Well)",
-            prognosis: "Bệnh nhân ở nhóm này có dự trữ sinh lý và sức đề kháng tốt trước các yếu tố gây căng thẳng (stressor). Nếu mắc bệnh cấp tính hoặc trải qua phẫu thuật, sự phụ thuộc của họ chỉ sụt giảm tạm thời và họ thường có khả năng tự phục hồi (bounce back) trở lại mức sống độc lập như ban đầu.",
+            prognosis: "Bệnh nhân ở nhóm này có dự trữ sinh lý và sức đề kháng tốt trước các yếu tố gây căng thẳng (stressor). Nếu mắc bệnh cấp tính hoặc trải qua phẫu thuật, sự phụ thuộc của họ chỉ sụt giảm tạm thời và họ thường có khả năng tự phục hồi (bounce back) trở lại mức sống độc lập như ban đầu.[cite: 2]",
             treatment: "Bệnh nhân thường đáp ứng tốt với các can thiệp y tế tích cực, hồi sức hay phẫu thuật tiêu chuẩn. Nguy cơ xảy ra các biến chứng nghiêm trọng hoặc tử vong là thấp hơn nhiều so với nhóm suy nhược."
         },
         3: {
@@ -523,7 +504,7 @@
     let currentStepId = 'step-terminally';
 
     function updateProgressBar() {
-        let totalSteps = 6; 
+        let totalSteps = 5; 
         let currentDepth = historyStack.length;
         let percentage = Math.min((currentDepth / totalSteps) * 100, 92);
         document.getElementById('progress').style.width = percentage + '%';
@@ -533,13 +514,19 @@
         historyStack.push(currentStepId);
         document.getElementById(currentStepId).classList.remove('active');
 
-        // Phân cấp cây logic chuẩn hóa hoàn toàn theo sơ đồ V4 quốc tế
+        // KHẮC PHỤC LOGIC RẼ NHÁNH CHUẨN THEO FILE GỐC V5
         if (currentStepId === 'step-terminally') {
             currentStepId = (action === 'yes-terminally') ? 'step-badl-terminally' : 'step-badl-normal';
         } else if (currentStepId === 'step-badl-normal') {
-            if (action === 'normal-badl-3-5') currentStepId = 'step-sub-badl-3-5';
-            else if (action === 'normal-badl-1-2') setCFS(6); // 1-2 BADLs quy về CFS 6 trực tiếp
-            else if (action === 'normal-badl-none') currentStepId = 'step-iadl-check';
+            if (action === 'normal-badl-3-5') {
+                setCFS(7); // Nếu chọn 3-5 BADL -> Xuất kết quả CFS 7 trực tiếp, loại bỏ câu hỏi phụ
+                return;
+            } else if (action === 'normal-badl-1-2') {
+                setCFS(6); // Nếu chọn 1-2 BADL -> Xuất kết quả CFS 6 trực tiếp
+                return;
+            } else if (action === 'normal-badl-none') {
+                currentStepId = 'step-iadl-check';
+            }
         } else if (currentStepId === 'step-iadl-check') {
             currentStepId = (action === 'has-iadl') ? 'step-iadl-count' : 'step-chronic-conditions';
         } else if (currentStepId === 'step-chronic-conditions') {
