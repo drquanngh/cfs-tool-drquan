@@ -3,198 +3,468 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Công cụ tính điểm CFS Lâm sàng - Lão khoa & Hồi sức</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>Công cụ Đánh giá Thang điểm CFS (Clinical Frailty Scale)</title>
     <style>
-        .fade-in { animation: fadeIn 0.4s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --border-color: #dcdde1;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--primary-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 15px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            font-size: 22px;
+            margin-bottom: 5px;
+            border-bottom: 3px solid var(--accent-color);
+            padding-bottom: 12px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            font-style: italic;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            height: 6px;
+            border-radius: 3px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        .step-container {
+            background: #fdfdfd;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .step-container.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: var(--secondary-color);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background: #fff;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px 18px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover {
+            border-color: var(--accent-color);
+            background-color: #f1f7fc;
+        }
+
+        .btn-nav-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+        .btn-nav {
+            background-color: #7f8c8d;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .btn-nav:hover {
+            background-color: #95a5a6;
+        }
+
+        /* Màn hình kết quả lâm sàng */
+        #result-section {
+            display: none;
+            margin-top: 25px;
+            padding: 25px;
+            border-radius: 8px;
+            border-left: 6px solid;
+        }
+
+        .cfs-score-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+
+        .result-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-top: 0;
+        }
+
+        .section-block {
+            margin-top: 15px;
+            background: rgba(255,255,255,0.85);
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid rgba(0,0,0,0.06);
+        }
+
+        .section-block h3 {
+            margin-top: 0;
+            font-size: 15px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            color: #2c3e50;
+        }
+
+        .section-block p {
+            font-size: 14.5px;
+            margin-bottom: 0;
+            text-align: justify;
+        }
+
+        .btn-reset {
+            display: block;
+            width: 220px;
+            margin: 25px auto 0;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .btn-reset:hover {
+            background-color: #2980b9;
+        }
+
+        /* Bảng màu phân độ CFS của kết quả */
+        .res-cfs-1, .res-cfs-2, .res-cfs-3 { background-color: #e8f5e9; border-color: #2e7d32; color: #1b5e20; }
+        .res-cfs-4 { background-color: #e3f2fd; border-color: #1565c0; color: #0d47a1; }
+        .res-cfs-5, .res-cfs-6 { background-color: #fff3e0; border-color: #ef6c00; color: #e65100; }
+        .res-cfs-7 { background-color: #fbe9e7; border-color: #d84315; color: #bf360c; }
+        .res-cfs-8 { background-color: #efebe9; border-color: #4e342e; color: #3e2723; }
+        .res-cfs-9 { background-color: #fce4ec; border-color: #c2185b; color: #880e4f; }
+
+        .badge-color-1, .badge-color-2, .badge-color-3 { background-color: #2e7d32; }
+        .badge-color-4 { background-color: #1565c0; }
+        .badge-color-5, .badge-color-6 { background-color: #ef6c00; }
+        .badge-color-7 { background-color: #d84315; }
+        .badge-color-8 { background-color: #4e342e; }
+        .badge-color-9 { background-color: #c2185b; }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen text-gray-800 font-sans">
+<body>
 
-    <div class="max-w-2xl mx-auto px-4 py-8">
-        <div class="bg-blue-800 text-white p-6 rounded-t-xl shadow-md text-center">
-            <h1 class="text-2xl font-bold uppercase tracking-wide">Cây phân loại CFS kỹ thuật số</h1>
-            <p class="text-sm mt-2 opacity-90">Ứng dụng hỗ trợ ra quyết định lâm sàng - Đại học Dalhousie</p>
-        </div>
+<div class="container">
+    <h1>CÂY QUYẾT ĐỊNH ĐÁNH GIÁ THANG ĐIỂM CFS</h1>
+    <div class="subtitle">Hệ thống hỗ trợ cá nhân hóa điều trị & tiên lượng lâm sàng</div>
 
-        <div class="bg-amber-50 border-l-4 border-amber-500 p-4 shadow-sm text-sm text-amber-900">
-            <p class="font-semibold">⚠️ NGUYÊN TẮC CỐ ĐỊNH:</p>
-            <p>Đánh giá tình trạng <strong>SỨC KHỎE NỀN (Baseline)</strong> của bệnh nhân tại thời điểm <strong>2 tuần trước khi nhập viện</strong>. Tránh nhầm lẫn với tình trạng bệnh cấp tính hiện tại!</p>
-        </div>
+    <div class="progress-bar-container">
+        <div class="progress-bar" id="progress"></div>
+    </div>
 
-        <div class="bg-white p-6 rounded-b-xl shadow-md mt-1 min-h-[300px] flex flex-col justify-between">
-            <div id="quiz-container" class="fade-in">
-                </div>
-
-            <div class="flex justify-between items-center mt-8 pt-4 border-t border-gray-100">
-                <button id="btn-back" onclick="goBack()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-350 transition font-medium hidden">
-                    ⬅ Quay lại câu trước
-                </button>
-                <button id="btn-restart" onclick="restartApp()" class="ml-auto px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition font-medium">
-                    🔄 Làm lại từ đầu
-                </button>
+    <div id="quiz-flow">
+        <div class="step-container active" id="step-endoflife">
+            <div class="question">1. Bệnh nhân có đang mắc bệnh nan y/giai đoạn cuối với thời gian sống dự kiến dưới 6 tháng không?</div>
+            <div class="options-grid">
+                <button class="option-btn" onclick="goToStep('yes-eol')">Có (Bệnh lý nan y giai đoạn cuối)</button>
+                <button class="option-btn" onclick="goToStep('no-eol')">Không</button>
             </div>
+        </div>
+
+        <div class="step-container" id="step-badl-eol">
+            <div class="question">2. Đánh giá mức độ phụ thuộc chăm sóc cá nhân (BADL):</div>
+            <div class="options-grid">
+                <button class="option-btn" onclick="setCFS(9)">Hoàn toàn độc lập hoặc chỉ yếu nhẹ trước đó (Thời gian sống &lt; 6 tháng)</button>
+                <button class="option-btn" onclick="setCFS(8)">Phụ thuộc hoàn toàn vào người khác chăm sóc và đang tiến gần cuối đời</button>
+            </div>
+        </div>
+
+        <div class="step-container" id="step-badl-no-eol">
+            <div class="question">2. Bệnh nhân cần sự trợ giúp từ người khác ở mức độ nào đối với hoạt động sinh hoạt cơ bản (BADL - tắm rửa, mặc quần áo, ăn uống, đi lại)?</div>
+            <div class="options-grid">
+                <button class="option-btn" onclick="goToStep('badl-3-5')">Phụ thuộc hoàn toàn (Cần hỗ trợ hầu hết hoặc toàn bộ các BADL)</button>
+                <button class="option-btn" onclick="goToStep('badl-1-2')">Phụ thuộc một phần (Cần hỗ trợ 1 - 2 hoạt động BADL cơ bản)</button>
+                <button class="option-btn" onclick="goToStep('badl-none')">Không phụ thuộc vào BADL (Tự chủ được sinh hoạt cá nhân cơ bản)</button>
+            </div>
+        </div>
+
+        <div class="step-container" id="step-badl-sub-3-5">
+            <div class="question">3. Xác định mức độ phụ thuộc thể chất hoặc nhận thức cụ thể:</div>
+            <div class="options-grid">
+                <button class="option-btn" onclick="setCFS(7)">Phụ thuộc hoàn toàn vào người khác để chăm sóc cá nhân (Nhưng chưa có nguy cơ tử vong trong 6 tháng)</button>
+                <button class="option-btn" onclick="setCFS(6)">Cần giúp đỡ cả hoạt động sinh hoạt hằng ngày và sinh hoạt công cụ (IADL & BADL mức độ vừa)</button>
+            </div>
+        </div>
+
+        <div class="step-container" id="step-iadl">
+            <div class="question">3. Bệnh nhân có cần trợ giúp trong các hoạt động sinh hoạt công cụ (IADL - quản lý tiền bạc, thuốc men, đi chợ, nấu ăn, việc nhà nặng) không?</div>
+            <div class="options-grid">
+                <button class="option-btn" onclick="goToStep('iadl-has')">Có (Cần trợ giúp trong các công việc xã hội, mua sắm, quản lý tài chính)</button>
+                <button class="option-btn" onclick="goToStep('iadl-none')">Không (Hoàn toàn độc lập trong mọi sinh hoạt hàng ngày)</button>
+            </div>
+        </div>
+
+        <div class="step-container" id="step-iadl-badl-count">
+            <div class="question">4. Biểu hiện cụ thể của sự trợ giúp sinh hoạt:</div>
+            <div class="options-grid">
+                <button class="option-btn" onclick="setCFS(6)">Cần người giúp đỡ rõ rệt trong các hoạt động phức tạp ngoài xã hội lẫn trong nhà</button>
+                <button class="option-btn" onclick="setCFS(5)">Cần trợ giúp chủ yếu ở các hoạt động công cụ phức tạp (IADL), có thể than phiền mệt mỏi</button>
+            </div>
+        </div>
+
+        <div class="step-container" id="step-chronic">
+            <div class="question">4. Tình trạng bệnh lý mạn tính của bệnh nhân như thế nào?</div>
+            <div class="options-grid">
+                <button class="option-btn" onclick="setCFS(4)">Các triệu chứng bệnh mạn tính làm giới hạn hoạt động rõ rệt; hoặc than mệt mỏi/chậm chạp</button>
+                <button class="option-btn" onclick="goToStep('chronic-normal')">Các bệnh mạn tính được kiểm soát tốt, không làm giới hạn hoạt động hàng ngày</button>
+            </div>
+        </div>
+
+        <div class="step-container" id="step-subjective">
+            <div class="question">5. Bệnh nhân tự đánh giá hoặc được đánh giá mức độ sức khỏe chủ quan thế nào?</div>
+            <div class="options-grid">
+                <button class="option-btn" onclick="goToStep('sub-excellent')">Xuất sắc / Trạng thái thể lực đỉnh cao</button>
+                <button class="option-btn" onclick="goToStep('sub-good')">Rất tốt hoặc Tốt / Quản lý tốt sức khỏe của mình</button>
+            </div>
+        </div>
+
+        <div class="step-container" id="step-excellent-effort">
+            <div class="question">6. Tần suất tham gia các hoạt động thể dục thể thao hoặc vận động gắng sức mạnh mẽ:</div>
+            <div class="options-grid">
+                <button class="option-btn" onclick="setCFS(1)">Thường xuyên vận động tích cực, thể lực vượt trội so với độ tuổi</button>
+                <button class="option-btn" onclick="setCFS(2)">Vận động ở mức vừa phải hoặc chỉ giới hạn theo mùa, không quá nổi trội</button>
+            </div>
+        </div>
+
+        <div class="step-container" id="step-good-effort">
+            <div class="question">6. Mức độ năng động và khả năng kiểm soát bệnh lý:</div>
+            <div class="options-grid">
+                <button class="option-btn" onclick="setCFS(2)">Khỏe mạnh, vận động tích cực nhưng không thường xuyên tập luyện thể thao cường độ cao</button>
+                <button class="option-btn" onclick="setCFS(3)">Quản lý tốt sức khỏe, các bệnh lý mạn tính được kiểm soát hoàn toàn ổn định ổn thỏa</button>
+            </div>
+        </div>
+
+        <div class="btn-nav-container">
+            <button class="btn-nav" id="back-btn" onclick="goBack()" style="visibility: hidden;">◀ Quay lại câu hỏi trước</button>
         </div>
     </div>
 
-    <script>
-        // Cấu trúc cây dữ liệu logic
-        const tree = {
-            start: {
-                question: "Bệnh nhân có tiên lượng tử vong trong vòng 6 tháng tới do bệnh lý giai đoạn cuối (Ví dụ: Ung thư di căn...) không?",
-                options: [
-                    { text: "CÓ (Giai đoạn cuối)", next: "result_9" },
-                    { text: "KHÔNG", next: "q1" }
-                ]
-            },
-            q1: {
-                question: "Bệnh nhân có gặp khó khăn hoặc cần người giúp đỡ trong các công việc hàng ngày (IADL) như: Nấu ăn, dọn dẹp nhẹ, mua sắm, quản lý tiền bạc không?",
-                options: [
-                    { text: "CÓ (Có phụ thuộc việc nhà)", next: "q1_1" },
-                    { text: "KHÔNG (Hoàn toàn tự chủ việc nhà)", next: "q2" }
-                ]
-            },
-            q1_1: {
-                question: "Mức độ tự chăm sóc cá nhân (ADL cơ bản) của bệnh nhân như thế nào?",
-                options: [
-                    { text: "Tự tắm rửa, mặc quần áo, đi vệ sinh độc lập hoàn toàn", next: "result_5" },
-                    { text: "Cần trợ giúp ít hoặc cần người nhắc nhở khi tắm rửa/mặc đồ", next: "result_6" },
-                    { text: "Phụ thuộc hoàn toàn vào người khác trong mọi việc chăm sóc cá nhân", next: "result_7" }
-                ]
-            },
-            q2: {
-                question: "Bệnh nhân có tự đi bộ được bình thường không?",
-                options: [
-                    { text: "CÓ (Đi bộ tốt)", next: "q3" },
-                    { text: "KHÔNG (Hoặc đi lại rất hạn chế)", next: "q2_1" }
-                ]
-            },
-            q2_1: {
-                question: "Bệnh nhân có thường xuyên thấy 'chậm chạp', mệt mỏi mạn tính hoặc sức khỏe làm cản trở các hoạt động thể chất nặng (như leo thang, mang vác) không?",
-                options: [
-                    { text: "CÓ (Có triệu chứng giới hạn hoạt động)", next: "result_4" },
-                    { text: "KHÔNG", next: "result_3" }
-                ]
-            },
-            q3: {
-                question: "Ngoài việc đi bộ thông thường, bệnh nhân có tham gia hoạt động thể thao, tập thể dục, vận động cường độ trung bình - cao định kỳ không?",
-                options: [
-                    { text: "KHÔNG (Chỉ đi bộ hoặc sinh hoạt nhẹ)", next: "result_3" },
-                    { text: "CÓ (Có tập thể thao tích cực)", next: "q3_1" }
-                ]
-            },
-            q3_1: {
-                question: "Tần suất và cường độ vận động thể thao của bệnh nhân như thế nào?",
-                options: [
-                    { text: "Tập thường xuyên, cường độ vừa phải để duy trì sức khỏe", next: "result_2" },
-                    { text: "Tập mạnh mẽ, năng động hàng ngày hoặc xuất sắc so với lứa tuổi", next: "result_1" }
-                ]
-            }
-        };
+    <div id="result-section">
+        <div class="cfs-score-badge" id="score-badge">CFS X</div>
+        <h2 class="result-title" id="result-text">Tên phân nhóm CFS</h2>
+        
+        <div class="section-block">
+            <h3>🔮 Tiên lượng Lâm sàng</h3>
+            <p id="prognosis-text"></p>
+        </div>
 
-        // Mô tả chi tiết kết quả 9 mức CFS
-        const cfsDescriptions = {
-            1: { title: "CFS 1 - Rất khỏe mạnh (Very Fit)", desc: "Người năng động, tràn đầy năng lượng, thường xuyên tập thể dục cường độ cao. Thuộc nhóm khỏe mạnh nhất so với lứa tuổi." },
-            2: { title: "CFS 2 - Khỏe mạnh (Well)", desc: "Người không có triệu chứng bệnh hoạt động, nhưng ít hoạt động mạnh hơn mức 1. Thường tập thể dục định kỳ hoặc năng động theo mùa." },
-            3: { title: "CFS 3 - Quản lý sức khỏe tốt (Managing Well)", desc: "Các bệnh lý nền được kiểm soát tốt. Mặc dù đôi khi có triệu chứng nhưng không làm hạn chế các hoạt động sinh hoạt." },
-            4: { title: "CFS 4 - Dễ bị tổn thương (Vulnerable)", desc: "Dù không phụ thuộc hoàn toàn vào người khác, nhưng các hoạt động bị giới hạn bởi triệu chứng (chậm chạp, mệt mỏi). Thường than phiền 'bị chậm lại'." },
-            5: { title: "CFS 5 - Suy nhược nhẹ (Mildly Frail)", desc: "Bắt đầu phụ thuộc vào người khác trong các hoạt động sinh hoạt hàng ngày có chuẩn bị (IADL) như mua sắm, nấu ăn, dọn dẹp, quản lý tiền." },
-            6: { title: "CFS 6 - Suy nhược vừa (Moderately Frail)", desc: "Cần giúp đỡ trong cả các hoạt động sinh hoạt cá nhân cơ bản, đặc biệt là việc tắm rửa, mặc quần áo (ADL trung gian)." },
-            7: { title: "CFS 7 - Suy nhược nặng (Severely Frail)", desc: "Phụ thuộc hoàn toàn vào người khác để chăm sóc cá nhân (mọi khía cạnh ADL). Thường không thể tự đi lại nếu không có người hỗ trợ." },
-            9: { title: "CFS 9 - Giai đoạn cuối (Terminally Ill)", desc: "Bệnh nhân có tiên lượng tử vong trong vòng 6 tháng tới do bệnh lý tiến triển giai đoạn cuối, dù trước đó mức độ suy nhược ở bậc nào." }
-        };
+        <div class="section-block">
+            <h3>🩺 Gợi ý Điều trị Định hướng Chuyên môn</h3>
+            <p id="treatment-text"></p>
+        </div>
 
-        let historyStack = [];
-        let currentNode = 'start';
+        <div style="margin-top: 20px; font-size: 13.5px; color: #555; font-style: italic; border-top: 1px dashed #ccc; padding-top: 10px;">
+            <strong>Khung nhận định chung:</strong> Thang điểm đánh giá Hội chứng dễ bị tổn thương Lâm sàng (CFS) không chỉ là một công cụ đo lường mức độ hội chứng dễ bị tổn thương, mà còn là một chỉ số tiên lượng mạnh mẽ. Việc chấm điểm CFS khi bệnh nhân nhập viện hồi sức (ICU) hoặc trước phẫu thuật giúp bác sĩ dự đoán khả năng phục hồi, nguy cơ biến chứng và đưa ra định hướng điều trị phù hợp. Tóm lại, CFS không chỉ là một con số, mà là cơ sở để các bác sĩ hồi sức cá nhân hóa điều trị, chuẩn bị kế hoạch xuất viện và giúp gia đình bệnh nhân hình dung được lộ trình phục hồi khó khăn ở phía trước.
+        </div>
 
-        function renderNode() {
-            const container = document.getElementById('quiz-container');
-            const backBtn = document.getElementById('btn-back');
+        <button class="btn-reset" onclick="resetApp()">🔄 Đánh giá bệnh nhân mới</button>
+    </div>
+</div>
+
+<script>
+    // Cơ sở dữ liệu nội dung Tiên lượng và Điều trị theo đúng yêu cầu chuyên môn
+    const cfsDatabase = {
+        1: {
+            title: "Mức 1: Rất khỏe mạnh (Very Fit)",
+            prognosis: "Bệnh nhân ở nhóm này có dự trữ sinh lý và sức đề kháng tốt trước các yếu tố gây căng thẳng (stressor). Nếu mắc bệnh cấp tính hoặc trải qua phẫu thuật, sự phụ thuộc của họ chỉ sụt giảm tạm thời và họ thường có khả năng tự phục hồi (bounce back) trở lại mức sống độc lập như ban đầu.",
+            treatment: "Bệnh nhân thường đáp ứng tốt với các can thiệp y tế tích cực, hồi sức hay phẫu thuật tiêu chuẩn. Nguy cơ xảy ra các biến chứng nghiêm trọng hoặc tử vong là thấp hơn nhiều so với nhóm suy nhược."
+        },
+        2: {
+            title: "Mức 2: Khỏe mạnh (Well)",
+            prognosis: "Bệnh nhân ở nhóm này có dự trữ sinh lý và sức đề kháng tốt trước các yếu tố gây căng thẳng (stressor). Nếu mắc bệnh cấp tính hoặc trải qua phẫu thuật, sự phụ thuộc của họ chỉ sụt giảm tạm thời và họ thường có khả năng tự phục hồi (bounce back) trở lại mức sống độc lập như ban đầu.",
+            treatment: "Bệnh nhân thường đáp ứng tốt với các can thiệp y tế tích cực, hồi sức hay phẫu thuật tiêu chuẩn. Nguy cơ xảy ra các biến chứng nghiêm trọng hoặc tử vong là thấp hơn nhiều so với nhóm suy nhược."
+        },
+        3: {
+            title: "Mức 3: Quản lý tốt sức khỏe (Managing Well)",
+            prognosis: "Bệnh nhân ở nhóm này có dự trữ sinh lý và sức đề kháng tốt trước các yếu tố gây căng thẳng (stressor). Nếu mắc bệnh cấp tính hoặc trải qua phẫu thuật, sự phụ thuộc của họ chỉ sụt giảm tạm thời và họ thường có khả năng tự phục hồi (bounce back) trở lại mức sống độc lập như ban đầu.",
+            treatment: "Bệnh nhân thường đáp ứng tốt với các can thiệp y tế tích cực, hồi sức hay phẫu thuật tiêu chuẩn. Nguy cơ xảy ra các biến chứng nghiêm trọng hoặc tử vong là thấp hơn nhiều so với nhóm suy nhược."
+        },
+        4: {
+            title: "Mức 4: Dễ bị tổn thương (Vulnerable)",
+            prognosis: "Dù chưa phụ thuộc vào người khác, nhưng bệnh nhân đã có triệu chứng mệt mỏi và \"chậm chạp\" làm giới hạn hoạt động. Họ nằm ở ranh giới của tình trạng dễ bị tổn thương.",
+            treatment: "Cần theo dõi sát sao trong quá trình hồi sức vì một đợt bệnh cấp tính có thể là \"cú hích\" đẩy họ chính thức bước sang mức dễ bị tổn thương (CFS 5 trở lên), khiến họ bắt đầu cần sự trợ giúp sau khi xuất viện."
+        },
+        5: {
+            title: "Mức 5: Hội chứng dễ bị tổn thương nhẹ (Mildly Frail)",
+            prognosis: "Bệnh nhân đã bắt đầu phụ thuộc vào người khác trong sinh hoạt (IADLs hoặc ADLs). Khi đối mặt with stressor như bệnh nặng hay phẫu thuật, sức khỏe của họ sẽ suy sụp rất nhanh và nghiêm trọng. Họ có nguy cơ cao gặp phải biến chứng, tử vong, kéo dài thời gian nằm viện, và đặc biệt là nguy cơ bị khuyết tật mới hoặc vĩnh viễn mất đi khả năng sống độc lập (phải chuyển đến cơ sở chăm sóc thay vì về nhà).",
+            treatment: "Bắt buộc phải có các can thiệp tối ưu hóa cá nhân hóa trước, trong và sau phẫu thuật/hồi sức (như tập trung cải thiện dinh dưỡng, tập luyện phục hồi chức năng, điều chỉnh thuốc men và can thiệp xã hội) để giảm bớt sự suy nhược. Đội ngũ y tế và gia đình cần lên kế hoạch sớm cho quá trình chuyển tiếp chăm sóc sau khi xuất viện."
+        },
+        6: {
+            title: "Mức 6: Hội chứng dễ bị tổn thương vừa (Moderately Frail)",
+            prognosis: "Bệnh nhân đã bắt đầu phụ thuộc vào người khác trong sinh hoạt (IADLs hoặc ADLs). Khi đối mặt với stressor như bệnh nặng hay phẫu thuật, sức khỏe của họ sẽ suy sụp rất nhanh và nghiêm trọng. Họ có nguy cơ cao gặp phải biến chứng, tử vong, kéo dài thời gian nằm viện, và đặc biệt là nguy cơ bị khuyết tật mới hoặc vĩnh viễn mất đi khả năng sống độc lập (phải chuyển đến cơ sở chăm sóc thay vì về nhà).",
+            treatment: "Bắt buộc phải có các can thiệp tối ưu hóa cá nhân hóa trước, trong và sau phẫu thuật/hồi sức (như tập trung cải thiện dinh dưỡng, tập luyện phục hồi chức năng, điều chỉnh thuốc men và can thiệp xã hội) để giảm bớt sự suy nhược. Đội ngũ y tế và gia đình cần lên kế hoạch sớm cho quá trình chuyển tiếp chăm sóc sau khi xuất viện."
+        },
+        7: {
+            title: "Mức 7: Hội chứng dễ bị tổn thương nghiêm trọng (Severely Frail)",
+            prognosis: "Bệnh nhân đã phụ thuộc hoàn toàn vào người khác để chăm sóc cá nhân (do thể chất hoặc nhận thức) nhưng chưa có nguy cơ tử vong cao trong vòng 6 tháng. Tuy nhiên, nếu bị bệnh lý cấp tính phải vào ICU, nguy cơ tử vong và rủi ro không thể phục hồi chức năng là rất cao.",
+            treatment: "Cần thảo luận kỹ lưỡng với gia đình về kỳ vọng thực tế. Các can thiệp ICU xâm lấn có thể cứu sống nhưng khó có khả năng trả lại chất lượng cuộc sống cho người bệnh."
+        },
+        8: {
+            title: "Mức 8: Hội chứng dễ bị tổn thương rất nghiêm trọng (Very Severely Frail)",
+            prognosis: "Bệnh nhân phụ thuộc hoàn toàn và đang tiến gần đến cuối đời. Đặc điểm then chốt của mức điểm này là họ không thể phục hồi ngay cả khi chỉ mắc một căn bệnh nhẹ.",
+            treatment: "Việc áp dụng các biện pháp hồi sức tích cực cường độ cao có thể mang lại nhiều gánh nặng và đau đớn hơn là lợi ích. Cần cân nhắc chuyển hướng ưu tiên sang các biện pháp chăm sóc giảm nhẹ (palliative care), giữ cho bệnh nhân thoải mái thay vì cố gắng kéo dài sự sống bằng mọi giá."
+        },
+        9: {
+            title: "Mức 9: Bệnh nhân giai đoạn cuối (Terminally Ill)",
+            prognosis: "Đây là những bệnh nhân mắc bệnh lý nan y với thời gian sống dự kiến dưới 6 tháng (dù trước đó họ không có biểu hiện của hội chứng dễ bị tổn thương).",
+            treatment: "Kết quả đánh giá này định hướng trực tiếp đến việc chăm sóc cuối đời. Các quyết định y khoa tại hồi sức nên tập trung hoàn toàn vào việc giảm nhẹ triệu chứng và tối ưu hóa chất lượng sống trong những tháng cuối cùng của bệnh nhân."
+        }
+    };
+
+    let historyStack = [];
+    let currentStepId = 'step-endoflife';
+
+    function updateProgressBar() {
+        let totalSteps = 5; 
+        let currentDepth = historyStack.length;
+        let percentage = Math.min((currentDepth / totalSteps) * 100, 90);
+        document.getElementById('progress').style.width = percentage + '%';
+    }
+
+    function goToStep(action) {
+        historyStack.push(currentStepId);
+        document.getElementById(currentStepId).classList.remove('active');
+
+        if (currentStepId === 'step-endoflife') {
+            currentStepId = (action === 'yes-eol') ? 'step-badl-eol' : 'step-badl-no-eol';
+        } else if (currentStepId === 'step-badl-no-eol') {
+            if (action === 'badl-3-5') currentStepId = 'step-badl-sub-3-5';
+            else if (action === 'badl-1-2') setCFS(6); 
+            else if (action === 'badl-none') currentStepId = 'step-iadl';
+        } else if (currentStepId === 'step-iadl') {
+            currentStepId = (action === 'iadl-has') ? 'step-iadl-badl-count' : 'step-chronic';
+        } else if (currentStepId === 'step-chronic') {
+            if (action === 'chronic-normal') currentStepId = 'step-subjective';
+        } else if (currentStepId === 'step-subjective') {
+            if (action === 'sub-excellent') currentStepId = 'step-excellent-effort';
+            else if (action === 'sub-good') currentStepId = 'step-good-effort';
+        }
+
+        const nextElement = document.getElementById(currentStepId);
+        if (nextElement) {
+            nextElement.classList.add('active');
+        }
+        
+        document.getElementById('back-btn').style.visibility = 'visible';
+        updateProgressBar();
+    }
+
+    function goBack() {
+        if (historyStack.length > 0) {
+            document.getElementById(currentStepId).classList.remove('active');
+            currentStepId = historyStack.pop();
+            document.getElementById(currentStepId).classList.add('active');
             
-            // Quản lý hiển thị nút Quay lại
-            if (historyStack.length > 0) {
-                backBtn.classList.remove('hidden');
-            } else {
-                backBtn.classList.add('hidden');
+            if (historyStack.length === 0) {
+                document.getElementById('back-btn').style.visibility = 'hidden';
             }
-
-            // Kiểm tra xem nút hiện tại có phải là kết quả không
-            if (currentNode.startsWith('result_')) {
-                const score = currentNode.split('_')[1];
-                const info = cfsDescriptions[score];
-                
-                container.innerHTML = `
-                    <div class="text-center py-4 fade-in">
-                        <div class="inline-block bg-blue-100 text-blue-800 text-4xl font-extrabold px-6 py-4 rounded-full shadow-inner mb-4">
-                            CFS ${score}
-                        </div>
-                        <h2 class="text-xl font-bold text-gray-900 mb-2">${info.title}</h2>
-                        <p class="text-gray-650 text-sm max-w-md mx-auto leading-relaxed mb-6">${info.desc}</p>
-                        
-                        <div class="bg-gray-50 border border-gray-200 p-4 rounded-lg max-w-md mx-auto text-left mt-4">
-                            <label class="block text-xs font-semibold text-gray-500 uppercase mb-2">🩺 Nhận định lâm sàng của Bác sĩ (Expert Override):</label>
-                            <p class="text-xs text-gray-500 mb-2">Nếu không đồng ý với kết quả cây logic, bác sĩ có thể điều chỉnh lại điểm thực tế:</p>
-                            <select id="expert-score" onchange="overrideScore(this.value)" class="w-full bg-white border border-gray-300 rounded-md p-2 text-sm font-medium">
-                                <option value="">-- Giữ nguyên điểm gợi ý (Mức ${score}) --</option>
-                                ${[1,2,3,4,5,6,7,8,9].map(i => `<option value="${i}">Điều chỉnh thành: CFS ${i}</option>`).join('')}
-                            </select>
-                        </div>
-                    </div>
-                `;
-                return;
-            }
-
-            // Ngược lại, hiển thị câu hỏi rẽ nhánh bình thường
-            const node = tree[currentNode];
-            let optionsHTML = '';
-            
-            node.options.forEach(opt => {
-                optionsHTML += `
-                    <button onclick="selectOption('${opt.next}')" class="w-full text-left bg-gray-50 border border-gray-200 p-4 rounded-xl hover:bg-blue-50 hover:border-blue-300 hover:text-blue-900 transition-all font-medium flex justify-between items-center group cursor-pointer shadow-sm">
-                        <span>${opt.text}</span>
-                        <span class="text-gray-400 group-hover:text-blue-500 transition-colors">➔</span>
-                    </button>
-                `;
-            });
-
-            container.innerHTML = `
-                <div class="space-y-4 fade-in">
-                    <h3 class="text-base font-semibold text-gray-900 leading-snug bg-gray-50 p-4 rounded-lg border-l-4 border-blue-600 shadow-xs">${node.question}</h3>
-                    <div class="space-y-2.5 pt-2">
-                        ${optionsHTML}
-                    </div>
-                </div>
-            `;
+            updateProgressBar();
         }
+    }
 
-        function selectOption(nextNode) {
-            historyStack.push(currentNode);
-            currentNode = nextNode;
-            renderNode();
-        }
+    function setCFS(score) {
+        document.getElementById('quiz-flow').style.display = 'none';
+        document.getElementById('progress').style.width = '100%';
+        
+        const resSection = document.getElementById('result-section');
+        resSection.className = 'res-cfs-' + score;
+        resSection.style.display = 'block';
 
-        function goBack() {
-            if (historyStack.length > 0) {
-                currentNode = historyStack.pop();
-                renderNode();
-            }
-        }
+        const badge = document.getElementById('score-badge');
+        badge.className = 'cfs-score-badge badge-color-' + score;
+        badge.innerText = 'ĐIỂM SỐ CHẨN ĐOÁN: CFS ' + score;
 
-        function restartApp() {
-            historyStack = [];
-            currentNode = 'start';
-            renderNode();
-        }
+        const data = cfsDatabase[score];
+        document.getElementById('result-text').innerText = data.title;
+        document.getElementById('prognosis-text').innerText = data.prognosis;
+        document.getElementById('treatment-text').innerText = data.treatment;
+    }
 
-        function overrideScore(val) {
-            if(val) {
-                alert(`Bác sĩ đã sử dụng quyền chuyên gia để ghi đè điểm số thành: CFS ${val}.\nKết quả này sẽ được ưu tiên áp dụng vào hồ sơ lâm sàng.`);
-            }
-        }
+    function resetApp() {
+        historyStack = [];
+        document.getElementById(currentStepId).classList.remove('active');
+        currentStepId = 'step-endoflife';
+        document.getElementById(currentStepId).classList.add('active');
+        
+        document.getElementById('quiz-flow').style.display = 'block';
+        document.getElementById('result-section').style.display = 'none';
+        document.getElementById('back-btn').style.visibility = 'hidden';
+        document.getElementById('progress').style.width = '0%';
+    }
+</script>
 
-        // Khởi chạy ứng dụng lần đầu
-        renderNode();
-    </script>
 </body>
 </html>
