@@ -10,7 +10,7 @@
             --secondary-color: #34495e;
             --accent-color: #2980b9;
             --text-color: #2c3e50;
-            --border-color: #dcdde1;
+            --border-color: #cbd5e1;
         }
 
         body {
@@ -23,47 +23,81 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            /* Dùng ảnh chụp bệnh viện làm hình nền toàn trang, kết hợp phủ màu gradient bảo vệ mắt */
-            background: linear-gradient(rgba(240, 244, 248, 0.88), rgba(240, 244, 248, 0.88)), 
-                        url('benh-vien-lao-khoa-trung-uong-luon-la-diem-tua-an-vui-manh-khoe-cua-nguoi-benh-cao-tuoi_649be6b1ecb5b.jpg') no-repeat center center fixed;
+            position: relative;
+            background-color: #f0f4f8;
+        }
+
+        /* KHẮC PHỤC LỖI BACKDROP: Tạo lớp nền cách điệu từ ảnh chụp bệnh viện */
+        .backdrop-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('benh-vien-lao-khoa-trung-uong-luon-la-diem-tua-an-vui-manh-khoe-cua-nguoi-benh-cao-tuoi_649be6b1ecb5b.jpg');
+            background-repeat: no-repeat;
+            background-position: center center;
             background-size: cover;
+            filter: blur(5px);
+            z-index: -2;
+        }
+
+        .backdrop-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(240, 244, 248, 0.85), rgba(200, 214, 229, 0.9));
+            z-index: -1;
         }
 
         .container {
             width: 100%;
-            max-width: 750px;
-            background: rgba(255, 255, 255, 0.95);
+            max-width: 760px;
+            background: rgba(255, 255, 255, 0.96);
             padding: 30px;
             border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(13, 71, 161, 0.15);
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 12px 40px rgba(13, 71, 161, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            z-index: 1;
         }
 
-        /* Khung chứa Logo nhận diện thương hiệu bệnh viện */
+        /* KHẮC PHỤC LỖI LOGO TRỐNG */
         .brand-header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+        }
+
+        .hospital-logo-container {
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 5px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
 
         .hospital-logo {
-            max-width: 130px;
-            height: auto;
-            margin-bottom: 10px;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
         }
 
         h1 {
-            text-align: center;
             color: var(--primary-color);
-            font-size: 20px;
+            font-size: 21px;
             font-weight: 800;
             margin: 5px 0;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
         }
 
         .subtitle {
-            text-align: center;
-            color: #546e7a;
+            color: #475569;
             font-style: italic;
             font-size: 13.5px;
             margin-bottom: 25px;
@@ -86,25 +120,25 @@
             transition: width 0.3s ease;
         }
 
-        /* Tạo màu sắc cá tính và bắt mắt cho khung chấm điểm/câu hỏi */
+        /* Giao diện khung câu hỏi mộc lâm sàng trực quan */
         .step-container {
             background: #ffffff;
             border: 1px solid #e2e8f0;
-            border-top: 4px solid var(--primary-color);
-            border-radius: 10px;
-            padding: 24px;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 12px;
+            padding: 26px;
             margin-bottom: 20px;
             display: none;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
         }
 
         .step-container.active {
             display: block;
-            animation: slideUp 0.4s ease;
+            animation: slideUp 0.35s ease-out;
         }
 
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(12px); }
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -112,11 +146,11 @@
             font-weight: 700;
             font-size: 16.5px;
             margin-bottom: 18px;
-            color: #1e293b;
+            color: #0f172a;
             line-height: 1.5;
         }
 
-        .badl-box {
+        .clinical-definition-box {
             background-color: #f0fdf4;
             border-left: 4px solid #16a34a;
             padding: 12px 16px;
@@ -126,7 +160,7 @@
             color: #14532d;
         }
 
-        .badl-title {
+        .definition-title {
             font-weight: bold;
             color: #16a34a;
             margin-bottom: 4px;
@@ -135,15 +169,14 @@
         .options-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 12px;
+            gap: 10px;
         }
 
-        /* Nút tùy chọn thiết kế hiện đại, đổi màu mượt mà */
         .option-btn {
             background: #ffffff;
             border: 1.5px solid #cbd5e1;
             border-radius: 8px;
-            padding: 14px 20px;
+            padding: 14px 18px;
             text-align: left;
             cursor: pointer;
             font-size: 14.5px;
@@ -156,7 +189,7 @@
             border-color: var(--primary-color);
             background-color: #f0f7ff;
             color: var(--primary-color);
-            transform: translateX(3px);
+            transform: translateX(4px);
         }
 
         .btn-nav-container {
@@ -174,37 +207,33 @@
             cursor: pointer;
             font-weight: 500;
             font-size: 13.5px;
-            transition: background 0.2s;
         }
 
-        .btn-nav:hover {
-            background-color: #475569;
-        }
+        .btn-nav:hover { background-color: #475569; }
 
-        /* Màn hình kết quả lâm sàng phân màu chuyên sâu */
+        /* Khung kết quả phân màu chuyên sâu lâm sàng */
         #result-section {
             display: none;
             margin-top: 25px;
             padding: 25px;
             border-radius: 12px;
             border-left: 6px solid;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
         }
 
         .cfs-score-badge {
             display: inline-block;
-            padding: 8px 16px;
+            padding: 8px 20px;
             border-radius: 30px;
             color: white;
             font-weight: bold;
-            font-size: 16px;
+            font-size: 17px;
             margin-bottom: 15px;
-            letter-spacing: 0.5px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         .result-title {
-            font-size: 21px;
+            font-size: 22px;
             font-weight: 800;
             margin-top: 0;
             margin-bottom: 15px;
@@ -212,7 +241,7 @@
 
         .section-block {
             margin-top: 15px;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             padding: 16px;
             border-radius: 8px;
             border: 1px solid rgba(0, 0, 0, 0.05);
@@ -248,15 +277,11 @@
             cursor: pointer;
             text-align: center;
             box-shadow: 0 4px 12px rgba(13, 71, 161, 0.2);
-            transition: all 0.2s;
         }
 
-        .btn-reset:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(13, 71, 161, 0.3);
-        }
+        .btn-reset:hover { transform: translateY(-1px); }
 
-        /* Phân định màu sắc theo nhóm điểm lâm sàng thực tế */
+        /* Bảng màu kết quả CFS chuẩn theo tài liệu gốc */
         .res-cfs-1, .res-cfs-2, .res-cfs-3 { background-color: #f0fdf4; border-color: #16a34a; color: #14532d; }
         .res-cfs-4 { background-color: #f0f9ff; border-color: #0284c7; color: #0c4a6e; }
         .res-cfs-5, .res-cfs-6 { background-color: #fff7ed; border-color: #ea580c; color: #7c2d12; }
@@ -274,10 +299,15 @@
 </head>
 <body>
 
+<div class="backdrop-background"></div>
+<div class="backdrop-overlay"></div>
+
 <div class="container">
-    <!-- Nhận diện thương hiệu chính thức -->
     <div class="brand-header">
-        <img src="download.png" alt="Logo Bệnh viện Lão khoa trung ương" class="hospital-logo">
+        <div class="hospital-logo-container">
+            <!-- Khắc phục lỗi hiển thị tệp logo download.png -->
+            <img src="download.png" alt="Logo Bệnh viện Lão khoa trung ương" class="hospital-logo" onerror="this.style.display='none'; this.parentNode.innerText='LOGOHOSPITAL'">
+        </div>
         <h1>CÔNG CỤ ĐÁNH GIÁ CLINICAL FRAILTY SCALE - CFS</h1>
         <div class="subtitle">Hệ thống hỗ trợ cá nhân hóa điều trị & tiên lượng lâm sàng</div>
     </div>
@@ -286,110 +316,129 @@
         <div class="progress-bar" id="progress"></div>
     </div>
 
-    <!-- KHUNG ĐIỀU HƯỚNG SƠ ĐỒ CÂY QUYẾT ĐỊNH -->
+    <!-- KHUNG ĐIỀU HƯỚNG CÂY QUYẾT ĐỊNH CHUẨN ĐÚNG THEO FILE GỐC V4 -->
     <div id="quiz-flow">
-        <!-- Bước 1: Tiên lượng giai đoạn cuối -->
-        <div class="step-container active" id="step-endoflife">
-            <div class="question">1. Bệnh nhân có đang mắc bệnh nan y/giai đoạn cuối với thời gian sống dự kiến dưới 6 tháng không?</div>
+        
+        <!-- BƯỚC 1: Terminally Ill -->
+        <div class="step-container active" id="step-terminally">
+            <div class="question">1. Bệnh nhân có đang mắc bệnh nan y giai đoạn cuối (Terminally ill) không?</div>
             <div class="options-grid">
-                <button class="option-btn" onclick="goToStep('yes-eol')">Có (Bệnh lý nan y giai đoạn cuối)</button>
-                <button class="option-btn" onclick="goToStep('no-eol')">Không</button>
+                <button class="option-btn" onclick="goToStep('yes-terminally')">Có (Yes)</button>
+                <button class="option-btn" onclick="goToStep('no-terminally')">Không (No)</button>
             </div>
         </div>
 
-        <!-- Bước 2a: Nhánh Có EOL -->
-        <div class="step-container" id="step-badl-eol">
-            <div class="question">2. Đánh giá mức độ phụ thuộc Các hoạt động sinh hoạt (cá nhân) cơ bản:</div>
-            <div class="badl-box">
-                <div class="badl-title">📌 Tiêu chuẩn đánh giá 5 hoạt động cơ bản tự làm bao gồm:</div>
-                Tắm rửa, ăn uống, đi lại, mặc quần áo, và đi vệ sinh.
+        <!-- BƯỚC 2A: Nhánh Có Terminally Ill -> Đếm BADL -->
+        <div class="step-container" id="step-badl-terminally">
+            <div class="question">2. Số lượng các hoạt động sinh hoạt cá nhân cơ bản (BADL) cần người khác hỗ trợ:</div>
+            <div class="clinical-definition-box">
+                <div class="definition-title">📌 Định nghĩa 5 hoạt động sinh hoạt cơ bản (BADL):</div>
+                Mặc quần áo (dress), tắm rửa (bathe), ăn uống (eat), đi lại (walk), ra vào giường (get in and out of bed).
             </div>
             <div class="options-grid">
-                <button class="option-btn" onclick="setCFS(9)">Cần hỗ trợ ít từ 0 - 2 hoạt động cơ bản (Thời gian sống &lt; 6 tháng)</button>
-                <button class="option-btn" onclick="setCFS(8)">Phụ thuộc rất nặng từ 3 - 5 hoạt động cơ bản và đang tiến gần cuối đời</button>
+                <button class="option-btn" onclick="setCFS(9)">Từ 0 - 2 BADL</button>
+                <button class="option-btn" onclick="setCFS(8)">Từ 3 - 5 BADL</button>
             </div>
         </div>
 
-        <!-- Bước 2b: Nhánh Không EOL -->
-        <div class="step-container" id="step-badl-no-eol">
-            <div class="question">2. Bệnh nhân cần sự trợ giúp từ người khác ở mức độ nào đối với Các hoạt động sinh hoạt (cá nhân) cơ bản?</div>
-            <div class="badl-box">
-                <div class="badl-title">📌 Tiêu chuẩn đánh giá 5 hoạt động cơ bản tự làm bao gồm:</div>
-                Tắm rửa, ăn uống, đi lại, mặc quần áo, và đi vệ sinh.
+        <!-- BƯỚC 2B: Nhánh Không Terminally Ill -> Kiểm tra BADL -->
+        <div class="step-container" id="step-badl-normal">
+            <div class="question">2. Số lượng các hoạt động sinh hoạt cá nhân cơ bản (BADL) cần người khác hỗ trợ:</div>
+            <div class="clinical-definition-box">
+                <div class="definition-title">📌 Định nghĩa 5 hoạt động sinh hoạt cơ bản (BADL):</div>
+                Mặc quần áo (dress), tắm rửa (bathe), ăn uống (eat), đi lại (walk), ra vào giường (get in and out of bed).
             </div>
             <div class="options-grid">
-                <button class="option-btn" onclick="goToStep('badl-3-5')">Phụ thuộc nhiều đến hoàn toàn (Cần người khác hỗ trợ từ 3 - 5 hoạt động cơ bản)</button>
-                <button class="option-btn" onclick="goToStep('badl-1-2')">Phụ thuộc một phần (Cần người khác hỗ trợ từ 1 - 2 hoạt động cơ bản)</button>
-                <button class="option-btn" onclick="goToStep('badl-none')">Không phụ thuộc hoạt động cơ bản (Tự chủ được hoàn toàn cả 5 hoạt động trên)</button>
+                <button class="option-btn" onclick="goToStep('normal-badl-3-5')">Từ 3 - 5 BADL</button>
+                <button class="option-btn" onclick="goToStep('normal-badl-1-2')">Từ 1 - 2 BADL</button>
+                <button class="option-btn" onclick="goToStep('normal-badl-none')">Không phụ thuộc hoạt động nào (None)</button>
             </div>
         </div>
 
-        <!-- Bước 3a: Phân tách Yếu nặng (7) và Yếu vừa (6) -->
-        <div class="step-container" id="step-badl-sub-3-5">
-            <div class="question">3. Chi tiết số lượng Các hoạt động sinh hoạt (cá nhân) cơ bản cần hỗ trợ cụ thể:</div>
-            <div class="badl-box">
-                <div class="badl-title">📌 5 hoạt động cơ bản:</div> Tắm rửa, ăn uống, đi lại, mặc quần áo, và đi vệ sinh.
-            </div>
+        <!-- BƯỚC 3A: Nhánh 3-5 BADL của người không bị bệnh giai đoạn cuối -->
+        <div class="step-container" id="step-sub-badl-3-5">
+            <div class="question">3. Đánh giá lại mức độ phụ thuộc cụ thể của bệnh nhân:</div>
             <div class="options-grid">
-                <button class="option-btn" onclick="setCFS(7)">Phụ thuộc hoàn toàn từ 3 - 5 hoạt động cơ bản (Nhưng chưa có nguy cơ tử vong trong 6 tháng)</button>
-                <button class="option-btn" onclick="setCFS(6)">Phụ thuộc mức độ vừa từ 1 - 2 hoạt động cơ bản</button>
+                <button class="option-btn" onclick="setCFS(7)">Từ 3 - 5 BADL (Living with Severe Frailty)</button>
+                <button class="option-btn" onclick="setCFS(6)">Từ 1 - 2 BADL (Phân cấp điều phối nhánh)</button>
             </div>
         </div>
 
-        <!-- Bước 3b: Nhánh Không BADL -> Khảo sát IADL -->
-        <div class="step-container" id="step-iadl">
-            <div class="question">3. Bệnh nhân có cần trợ giúp trong các hoạt động sinh hoạt công cụ (IADL - dùng điện thoại, đi mua sắm, chuẩn bị bữa ăn, làm việc nhà, giặt giũ, quản lý thuốc, quản lý tiền bạc) không?</div>
+        <!-- BƯỚC 3B: Sửa lỗi chính xác theo file gốc -> Nhánh Không BADL -> Kiểm tra số lượng IADL hỗ trợ -->
+        <div class="step-container" id="step-iadl-check">
+            <div class="question">3. Số lượng các hoạt động sinh hoạt công cụ (IADL) cần người khác hỗ trợ:</div>
+            <div class="clinical-definition-box">
+                <div class="definition-title">📌 Định nghĩa hoạt động sinh hoạt công cụ (IADL):</div>
+                Sử dụng điện thoại (use telephone), đi mua sắm (go shopping), chuẩn bị bữa ăn (prepare meals), làm việc nhà (do housework), quản lý thuốc men (take medication), tự quản lý tiền bạc (handle own money).
+            </div>
             <div class="options-grid">
-                <button class="option-btn" onclick="goToStep('iadl-has')">Có (Cần trợ giúp trong các công việc xã hội hoặc sinh hoạt công cụ phức tạp)</button>
-                <button class="option-btn" onclick="goToStep('iadl-none')">Không (Hoàn toàn độc lập trong mọi sinh hoạt hàng ngày)</button>
+                <button class="option-btn" onclick="goToStep('has-iadl')">Có hoạt động IADL cần hỗ trợ</button>
+                <button class="option-btn" onclick="goToStep('none-iadl')">Không phụ thuộc hoạt động IADL nào (None)</button>
             </div>
         </div>
 
-        <!-- Bước 4a: Nhánh Có IADL -->
-        <div class="step-container" id="step-iadl-badl-count">
-            <div class="question">4. Biểu hiện chi tiết về số lượng Các hoạt động sinh hoạt (cá nhân) cơ bản bị ảnh hưởng gián tiếp trong nhánh này:</div>
-            <div class="badl-box">
-                <div class="badl-title">📌 5 hoạt động cơ bản:</div> Tắm rửa, ăn uống, đi lại, mặc quần áo, và đi vệ sinh.
-            </div>
+        <!-- BƯỚC 4A: Đếm số lượng đầu mục IADL chuẩn (Sửa lỗi ghi nhầm thành BADL ở ảnh cũ) -->
+        <div class="step-container" id="step-iadl-count">
+            <div class="question">4. Xác định chính xác số lượng đầu mục IADL cần người khác hỗ trợ:</div>
             <div class="options-grid">
-                <button class="option-btn" onclick="setCFS(6)">Cần hỗ trợ thêm từ 5 - 6 đầu mục tích hợp (Hội chứng dễ bị tổn thương vừa)</button>
-                <button class="option-btn" onclick="setCFS(5)">Cần hỗ trợ từ 1 - 4 đầu mục, chủ yếu phụ thuộc sinh hoạt công cụ (Hội chứng dễ bị tổn thương nhẹ)</button>
+                <button class="option-btn" onclick="setCFS(6)">Cần hỗ trợ từ 5 - 6 IADLs (Living with Moderate Frailty)</button>
+                <button class="option-btn" onclick="setCFS(5)">Cần hỗ trợ từ 1 - 4 IADLs (Living with Mild Frailty)</button>
             </div>
         </div>
 
-        <!-- Bước 4b: Nhánh Không IADL -->
-        <div class="step-container" id="step-chronic">
-            <div class="question">4. Tình trạng bệnh lý mạn tính của bệnh nhân như thế nào?</div>
+        <!-- BƯỚC 4B: Số lượng bệnh mạn tính (Number of Chronic Conditions) -->
+        <div class="step-container" id="step-chronic-conditions">
+            <div class="question">4. Số lượng bệnh lý mạn tính (Number of Chronic Conditions) của bệnh nhân:</div>
             <div class="options-grid">
-                <button class="option-btn" onclick="setCFS(4)">Nghiêm trọng (Có ≥ 10 bệnh mạn tính làm giới hạn rõ rệt hoạt động; hoặc than mệt mỏi, chậm chạp)</button>
-                <button class="option-btn" onclick="goToStep('chronic-normal')">Ổn định (Chỉ từ 0 - 9 bệnh mạn tính, được kiểm soát tốt, không giới hạn sinh hoạt)</button>
+                <button class="option-btn" onclick="setCFS(4)">Nghiêm trọng (≥ 10 bệnh mạn tính)</button>
+                <button class="option-btn" onclick="goToStep('chronic-0-9')">Kiểm soát tốt (Từ 0 - 9 bệnh mạn tính)</button>
             </div>
         </div>
 
-        <!-- Bước 5: Đánh giá sức khỏe chủ quan -->
-        <div class="step-container" id="step-subjective">
-            <div class="question">5. Đánh giá sức khỏe chủ quan của bệnh nhân ở trạng thái không phụ thuộc:</div>
+        <!-- BƯỚC 5: Đánh giá sức khỏe chủ quan (Self-Rated Health) -->
+        <div class="step-container" id="step-self-health">
+            <div class="question">5. Chỉ số đánh giá sức khỏe chủ quan (Self-Rated Health):</div>
             <div class="options-grid">
-                <button class="option-btn" onclick="goToStep('sub-excellent')">Xuất sắc / Trạng thái thể lực đỉnh cao</button>
-                <button class="option-btn" onclick="goToStep('sub-good')">Rất tốt hoặc Tốt / Đang quản lý tốt sức khỏe của mình</button>
+                <button class="option-btn" onclick="goToStep('health-excellent')">Xuất sắc (Excellent)</button>
+                <button class="option-btn" onclick="goToStep('health-good')">Rất tốt / Tốt (Very Good / Good)</button>
+                <button class="option-btn" onclick="setCFS(4)">Trung bình / Kém (Fair / Poor) -> Chỉ định trực tiếp CFS 4</button>
             </div>
         </div>
 
-        <!-- Bước 6a: Nhánh Xuất sắc -->
-        <div class="step-container" id="step-excellent-effort">
-            <div class="question">6. Mọi hoạt động hàng ngày đều được xem là một nỗ lực lớn: Mức độ thường xuyên?</div>
+        <!-- BƯỚC 6A: Nhánh Sức khỏe Xuất sắc -> Everything is an effort -->
+        <div class="step-container" id="step-effort-excellent">
+            <div class="question">6. Cảm giác mọi hoạt động hàng ngày đều phải nỗ lực rất lớn (Everything is an effort):</div>
             <div class="options-grid">
-                <button class="option-btn" onclick="setCFS(4)">Luôn luôn từ 5 - 7 ngày/tuần (Nằm ở ranh giới CFS 4)</button>
-                <button class="option-btn" onclick="setCFS(1)">Hiếm khi hoặc Không bao giờ / Thường xuyên tập thể thao tích cực gắng sức (CFS 1)</button>
+                <button class="option-btn" onclick="setCFS(4)">Luôn luôn / Hầu như toàn bộ thời gian [5-7 ngày/tuần]</button>
+                <button class="option-btn" onclick="goToStep('exc-effort-rare')">Hiếm khi hoặc Không bao giờ [&lt; 1 ngày/tuần]</button>
             </div>
         </div>
 
-        <!-- Bước 6b: Nhánh Tốt -->
-        <div class="step-container" id="step-good-effort">
-            <div class="question">6. Mức độ năng động và khả năng kiểm soát bệnh lý:</div>
+        <!-- BƯỚC 6B: Nhánh Sức khỏe Rất tốt/Tốt -> Everything is an effort (Đúng chuẩn 3 nhánh file gốc) -->
+        <div class="step-container" id="step-effort-good">
+            <div class="question">6. Cảm giác mọi hoạt động hàng ngày đều phải nỗ lực rất lớn (Everything is an effort):</div>
             <div class="options-grid">
-                <button class="option-btn" onclick="setCFS(2)">Khỏe mạnh (Vận động tích cực nhưng không thường xuyên tập luyện cường độ quá cao)</button>
-                <button class="option-btn" onclick="setCFS(3)">Quản lý tốt sức khỏe (Các bệnh lý mạn tính được kiểm soát hoàn toàn ổn định)</button>
+                <button class="option-btn" onclick="setCFS(4)">Thỉnh thoảng / Đôi khi [1-4 ngày/tuần]</button>
+                <button class="option-btn" onclick="goToStep('good-effort-rare')">Hiếm khi hoặc Không bao giờ [&lt; 1 ngày/tuần]</button>
+                <button class="option-btn" onclick="setCFS(4)">Luôn luôn / Toàn bộ thời gian [5-7 ngày/tuần]</button>
+            </div>
+        </div>
+
+        <!-- BƯỚC 7A: Hoạt động thể chất của nhánh Thể lực Xuất sắc -->
+        <div class="step-container" id="step-sport-excellent">
+            <div class="question">7. Bệnh nhân có thường xuyên tham gia các hoạt động thể thao hoặc giải trí gắng sức/vừa phải không?</div>
+            <div class="options-grid">
+                <button class="option-btn" onclick="setCFS(1)">Có (Yes) -> Thể lực vượt trội (CFS 1)</button>
+                <button class="option-btn" onclick="setCFS(2)">Không (No) -> Khỏe mạnh thông thường (CFS 2)</button>
+            </div>
+        </div>
+
+        <!-- BƯỚC 7B: Hoạt động thể chất của nhánh Thể lực Tốt -->
+        <div class="step-container" id="step-sport-good">
+            <div class="question">7. Bệnh nhân có thường xuyên tham gia các hoạt động thể thao hoặc giải trí gắng sức/vừa phải không?</div>
+            <div class="options-grid">
+                <button class="option-btn" onclick="setCFS(2)">Có (Yes) -> Khỏe mạnh thông thường (CFS 2)</button>
+                <button class="option-btn" onclick="setCFS(3)">Không (No) -> Quản lý sức khỏe tốt (CFS 3)</button>
             </div>
         </div>
 
@@ -435,48 +484,48 @@
         },
         3: {
             title: "Mức 3: Quản lý tốt sức khỏe (Managing Well)",
-            prognosis: "Bệnh nhân ở nhóm này có dự trữ sinh lý và sức đề kháng tốt trước các yếu tố gây căng thẳng (stressor). Nếu mắc bệnh cấp tính hoặc trải qua phẫu thuật, sự phụ thuộc của họ chỉ sụt giảm tạm thời và họ thường có khả năng tự phục hồi (bounce back) trở lại mức sống độc lập như ban đầu.",
+            prognosis: "Bệnh nhân ở nhóm này có dự trữ sinh lý và sức đề kháng tốt trước các yếu tố gây căng thẳng (stressor). Nếu mắc bệnh cấp tính hoặc trải qua phẫu thuật, sự phụ thuộc của họ chỉ sụt giảm tạm thời và họ thường có khả năng tự phục hồi (bounce back) trở lại mức sống độc lập như ban đầu.[cite: 2]",
             treatment: "Bệnh nhân thường đáp ứng tốt với các can thiệp y tế tích cực, hồi sức hay phẫu thuật tiêu chuẩn. Nguy cơ xảy ra các biến chứng nghiêm trọng hoặc tử vong là thấp hơn nhiều so với nhóm suy nhược."
         },
         4: {
             title: "Mức 4: Dễ bị tổn thương (Vulnerable)",
-            prognosis: "Dù chưa phụ thuộc vào người khác, nhưng bệnh nhân đã có triệu chứng mệt mỏi và \"chậm chạp\" làm giới hạn hoạt động. Họ nằm ở ranh giới của tình trạng dễ bị tổn thương.",
-            treatment: "Cần theo dõi sát sao trong quá trình hồi sức vì một đợt bệnh cấp tính có thể là \"cú hích\" đẩy họ chính thức bước sang mức dễ bị tổn thương (CFS 5 trở lên), khiến họ bắt đầu cần sự trợ giúp sau khi xuất viện."
+            prognosis: "Dù chưa phụ thuộc vào người khác, nhưng bệnh nhân đã có triệu chứng mệt mỏi và \"chậm chạp\" làm giới hạn hoạt động[cite: 2]. Họ nằm ở ranh giới của tình trạng dễ bị tổn thương[cite: 2].",
+            treatment: "Cần theo dõi sát sao trong quá trình hồi sức vì một đợt bệnh cấp tính có thể là \"cú hích\" đẩy họ chính thức bước sang mức dễ bị tổn thương (CFS 5 trở lên), khiến họ bắt đầu cần sự trợ giúp sau khi xuất viện.[cite: 2]"
         },
         5: {
             title: "Mức 5: Hội chứng dễ bị tổn thương nhẹ (Mildly Frail)",
-            prognosis: "Bệnh nhân đã bắt đầu phụ thuộc vào người khác trong sinh hoạt (IADLs hoặc ADLs). Khi đối mặt với stressor như bệnh nặng hay phẫu thuật, sức khỏe của họ sẽ suy sụp rất nhanh và nghiêm trọng. Họ có nguy cơ cao gặp phải biến chứng, tử vong, kéo dài thời gian nằm viện, và đặc biệt là nguy cơ bị khuyết tật mới hoặc vĩnh viễn mất đi khả năng sống độc lập (phải chuyển đến cơ sở chăm sóc thay vì về nhà).",
-            treatment: "Bắt buộc phải có các can thiệp tối ưu hóa cá nhân hóa trước, trong và sau phẫu thuật/hồi sức (như tập trung cải thiện dinh dưỡng, tập luyện phục hồi chức năng, điều chỉnh thuốc men và can thiệp xã hội) để giảm bớt sự suy nhược. Đội ngũ y tế và gia đình cần lên kế hoạch sớm cho quá trình chuyển tiếp chăm sóc sau khi xuất viện."
+            prognosis: "Bệnh nhân đã bắt đầu phụ thuộc vào người khác trong sinh hoạt (IADLs hoặc ADLs)[cite: 2]. Khi đối mặt với stressor như bệnh nặng hay phẫu thuật, sức khỏe của họ sẽ suy sụp rất nhanh và nghiêm trọng[cite: 2]. Họ có nguy cơ cao gặp phải biến chứng, tử vong, kéo dài thời gian nằm viện, và đặc biệt là nguy cơ bị khuyết tật mới hoặc vĩnh viễn mất đi khả năng sống độc lập (phải chuyển đến cơ sở chăm sóc thay vì về nhà)[cite: 2].",
+            treatment: "Bắt buộc phải có các can thiệp tối ưu hóa cá nhân hóa trước, trong và sau phẫu thuật/hồi sức (như tập trung cải thiện dinh dưỡng, tập luyện phục hồi chức năng, điều chỉnh thuốc men và can thiệp xã hội) để giảm bớt sự suy nhược[cite: 2]. Đội ngũ y tế và gia đình cần lên kế hoạch sớm cho quá trình chuyển tiếp chăm sóc sau khi xuất viện[cite: 2]."
         },
         6: {
             title: "Mức 6: Hội chứng dễ bị tổn thương vừa (Moderately Frail)",
-            prognosis: "Bệnh nhân đã bắt đầu phụ thuộc vào người khác trong sinh hoạt (IADLs hoặc ADLs). Khi đối mặt với stressor như bệnh nặng hay phẫu thuật, sức khỏe của họ sẽ suy sụp rất nhanh và nghiêm trọng. Họ có nguy cơ cao gặp phải biến chứng, tử vong, kéo dài thời gian nằm viện, và đặc biệt là nguy cơ bị khuyết tật mới hoặc vĩnh viễn mất đi khả năng sống độc lập (phải chuyển đến cơ sở chăm sóc thay vì về nhà).",
-            treatment: "Bắt buộc phải có các can thiệp tối ưu hóa cá nhân hóa trước, trong và sau phẫu thuật/hồi sức (như tập trung cải thiện dinh dưỡng, tập luyện phục hồi chức năng, điều chỉnh thuốc men và can thiệp xã hội) để giảm bớt sự suy nhược. Đội ngũ y tế và gia đình cần lên kế hoạch sớm cho quá trình chuyển tiếp chăm sóc sau khi xuất viện."
+            prognosis: "Bệnh nhân đã bắt đầu phụ thuộc vào người khác trong sinh hoạt (IADLs hoặc ADLs)[cite: 2]. Khi đối mặt với stressor như bệnh nặng hay phẫu thuật, sức khỏe của họ sẽ suy sụp rất nhanh và nghiêm trọng[cite: 2]. Họ có nguy cơ cao gặp phải biến chứng, tử vong, kéo dài thời gian nằm viện, và đặc biệt là nguy cơ bị khuyết tật mới hoặc vĩnh viễn mất đi khả năng sống độc lập (phải chuyển đến cơ sở chăm sóc thay vì về nhà)[cite: 2].",
+            treatment: "Bắt buộc phải có các can thiệp tối ưu hóa cá nhân hóa trước, trong và sau phẫu thuật/hồi sức (như tập trung cải thiện dinh dưỡng, tập luyện phục hồi chức năng, điều chỉnh thuốc men và can thiệp xã hội) để giảm bớt sự suy nhược[cite: 2]. Đội ngũ y tế và gia đình cần lên kế hoạch sớm cho quá trình chuyển tiếp chăm sóc sau khi xuất viện[cite: 2]."
         },
         7: {
             title: "Mức 7: Hội chứng dễ bị tổn thương nghiêm trọng (Severely Frail)",
-            prognosis: "Bệnh nhân đã phụ thuộc hoàn toàn vào người khác để chăm sóc cá nhân (do thể chất hoặc nhận thức) nhưng chưa có nguy cơ tử vong cao trong vòng 6 tháng. Tuy nhiên, nếu bị bệnh lý cấp tính phải vào ICU, nguy cơ tử vong và rủi ro không thể phục hồi chức năng là rất cao.",
-            treatment: "Cần thảo luận kỹ lưỡng với gia đình về kỳ vọng thực tế. Các can thiệp ICU xâm lấn có thể cứu sống nhưng khó có khả năng trả lại chất lượng cuộc sống cho người bệnh."
+            prognosis: "Bệnh nhân đã phụ thuộc hoàn toàn vào người khác để chăm sóc cá nhân (do thể chất hoặc nhận thức) nhưng chưa có nguy cơ tử vong cao trong vòng 6 tháng[cite: 2]. Tuy nhiên, nếu bị bệnh lý cấp tính phải vào ICU, nguy cơ tử vong và rủi ro không thể phục hồi chức năng là rất cao[cite: 2].",
+            treatment: "Cần thảo luận kỹ lưỡng với gia đình về kỳ vọng thực tế[cite: 2]. Các can thiệp ICU xâm lấn có thể cứu sống nhưng khó có khả năng trả lại chất lượng cuộc sống cho người bệnh[cite: 2]."
         },
         8: {
             title: "Mức 8: Hội chứng dễ bị tổn thương rất nghiêm trọng (Very Severely Frail)",
-            prognosis: "Bệnh nhân phụ thuộc hoàn toàn và đang tiến gần đến cuối đời. Đặc điểm then chốt của mức điểm này là họ không thể phục hồi ngay cả khi chỉ mắc một căn bệnh nhẹ.",
-            treatment: "Việc áp dụng các biện pháp hồi sức tích cực cường độ cao có thể mang lại nhiều gánh nặng và đau đớn hơn là lợi ích. Cần cân nhắc chuyển hướng ưu tiên sang các biện pháp chăm sóc giảm nhẹ (palliative care), giữ cho bệnh nhân thoải mái thay vì cố gắng kéo dài sự sống bằng mọi giá."
+            prognosis: "Bệnh nhân phụ thuộc hoàn toàn và đang tiến gần đến cuối đời[cite: 2]. Đặc điểm then chốt của mức điểm này là họ không thể phục hồi ngay cả khi chỉ mắc một căn bệnh nhẹ[cite: 2].",
+            treatment: "Việc áp dụng các biện pháp hồi sức tích cực cường độ cao có thể mang lại nhiều gánh nặng và đau đớn hơn là lợi ích[cite: 2]. Cần cân nhắc chuyển hướng ưu tiên sang các biện pháp chăm sóc giảm nhẹ (palliative care), giữ cho bệnh nhân thoải mái thay vì cố gắng kéo dài sự sống bằng mọi giá[cite: 2]."
         },
         9: {
             title: "Mức 9: Bệnh nhân giai đoạn cuối (Terminally Ill)",
-            prognosis: "Đây là những bệnh nhân mắc bệnh lý nan y với thời gian sống dự kiến dưới 6 tháng (dù trước đó họ không có biểu hiện của hội chứng dễ bị tổn thương).",
-            treatment: "Kết quả đánh giá này định hướng trực tiếp đến việc chăm sóc cuối đời. Các quyết định y khoa tại hồi sức nên tập trung hoàn toàn vào việc giảm nhẹ triệu chứng và tối ưu hóa chất lượng sống trong những tháng cuối cùng của bệnh nhân."
+            prognosis: "Đây là những bệnh nhân mắc bệnh lý nan y với thời gian sống dự kiến dưới 6 tháng (dù trước đó họ không có biểu hiện của hội chứng dễ bị tổn thương).[cite: 2]",
+            treatment: "Kết quả đánh giá này định hướng trực tiếp đến việc chăm sóc cuối đời[cite: 2]. Các quyết định y khoa tại hồi sức nên tập trung hoàn toàn vào việc giảm nhẹ triệu chứng và tối ưu hóa chất lượng sống trong những tháng cuối cùng của bệnh nhân[cite: 2]."
         }
     };
 
     let historyStack = [];
-    let currentStepId = 'step-endoflife';
+    let currentStepId = 'step-terminally';
 
     function updateProgressBar() {
-        let totalSteps = 5; 
+        let totalSteps = 6; 
         let currentDepth = historyStack.length;
-        let percentage = Math.min((currentDepth / totalSteps) * 100, 90);
+        let percentage = Math.min((currentDepth / totalSteps) * 100, 92);
         document.getElementById('progress').style.width = percentage + '%';
     }
 
@@ -484,19 +533,24 @@
         historyStack.push(currentStepId);
         document.getElementById(currentStepId).classList.remove('active');
 
-        if (currentStepId === 'step-endoflife') {
-            currentStepId = (action === 'yes-eol') ? 'step-badl-eol' : 'step-badl-no-eol';
-        } else if (currentStepId === 'step-badl-no-eol') {
-            if (action === 'badl-3-5') currentStepId = 'step-badl-sub-3-5';
-            else if (action === 'badl-1-2') setCFS(6); 
-            else if (action === 'badl-none') currentStepId = 'step-iadl';
-        } else if (currentStepId === 'step-iadl') {
-            currentStepId = (action === 'iadl-has') ? 'step-iadl-badl-count' : 'step-chronic';
-        } else if (currentStepId === 'step-chronic') {
-            if (action === 'chronic-normal') currentStepId = 'step-subjective';
-        } else if (currentStepId === 'step-subjective') {
-            if (action === 'sub-excellent') currentStepId = 'step-excellent-effort';
-            else if (action === 'sub-good') currentStepId = 'step-good-effort';
+        // Phân cấp cây logic chuẩn hóa hoàn toàn theo sơ đồ V4 quốc tế
+        if (currentStepId === 'step-terminally') {
+            currentStepId = (action === 'yes-terminally') ? 'step-badl-terminally' : 'step-badl-normal';
+        } else if (currentStepId === 'step-badl-normal') {
+            if (action === 'normal-badl-3-5') currentStepId = 'step-sub-badl-3-5';
+            else if (action === 'normal-badl-1-2') setCFS(6); // 1-2 BADLs quy về CFS 6 trực tiếp
+            else if (action === 'normal-badl-none') currentStepId = 'step-iadl-check';
+        } else if (currentStepId === 'step-iadl-check') {
+            currentStepId = (action === 'has-iadl') ? 'step-iadl-count' : 'step-chronic-conditions';
+        } else if (currentStepId === 'step-chronic-conditions') {
+            if (action === 'chronic-0-9') currentStepId = 'step-self-health';
+        } else if (currentStepId === 'step-self-health') {
+            if (action === 'health-excellent') currentStepId = 'step-effort-excellent';
+            else if (action === 'health-good') currentStepId = 'step-effort-good';
+        } else if (currentStepId === 'step-effort-excellent') {
+            if (action === 'exc-effort-rare') currentStepId = 'step-sport-excellent';
+        } else if (currentStepId === 'step-effort-good') {
+            if (action === 'good-effort-rare') currentStepId = 'step-sport-good';
         }
 
         const nextElement = document.getElementById(currentStepId);
@@ -542,7 +596,7 @@
     function resetApp() {
         historyStack = [];
         document.getElementById(currentStepId).classList.remove('active');
-        currentStepId = 'step-endoflife';
+        currentStepId = 'step-terminally';
         document.getElementById(currentStepId).classList.add('active');
         
         document.getElementById('quiz-flow').style.display = 'block';
